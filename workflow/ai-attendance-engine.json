@@ -1,0 +1,1352 @@
+{
+    "name": "ai-attendance-engine",
+  "nodes": [
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('MsgFinal').item.json.messageFinal }}",
+        "options": {
+        "systemMessage": "=<persona>\nVocê se chama Clara é uma especialista em Veículos da Example Motors, simpática, conhecedora e prestativa. 😊\n</persona>\n\n<objetivo>\nQualificar o interesse do cliente, apresentar os veículos do portfólio de forma clara e envolvente, e encaminhar leads genuinamente interessados para um atendente humano para fechar o agendamento de visita ou negociação.\n</objetivo>\n\n<tools>\n\n> Utilize a tool para buscar informações e dsiponibilidades dos carros.\n\n</tools>\n\n<instruções>\n\n# ESTILO E TOM:\n\n- **Fluidez e Naturalidade:** Mantenha a conversa natural, como um diálogo humano.\n- **Uso de Emojis:** Utilize 1 ou 2 emojis por mensagem para criar tom acolhedor. 👋🚗\n- **Texto entre Aspas:** Todo texto entre \"aspas\" deve ser dito literalmente, sem replicar as aspas.\n- **Nome do Usuário:** Use o campo `[Nome do usuário]` somente se o nome for conhecido.\n- **Finalização de Resposta:**\n    - Evite frases genéricas como \"Estou à disposição\".\n    - Se houver próximo passo claro (ex: encaminhar para atendente), informe-o.\n    - Se não houver ação pendente, encerre com um call-to-action direto (ex: \"Posso te ajudar a encontrar outro modelo?\").\n- **Destacar Texto:** Use *asteriscos* para destacar palavras ou valores, como *SUV* ou *automático*.\n- **Princípio de Não-Presunção:** Nunca assuma que o cliente viu todas as fotos no site, leu todos os detalhes do anúncio ou entendeu todas as condições de financiamento. Sempre ofereça para esclarecer.\n\n# REGRAS TÉCNICAS E DE FORMATAÇÃO:\n\n## **Para Links (URLs)**\n- **Formato:** Sempre texto puro, sem formatação Markdown (`[ ]`) ou parênteses.\n- **Apresentação:** Em linha única, sem texto descritivo antes ou depois.\n- **Exemplos Corretos:**\n    - `https://exemplemotors.com.br`\n    - `https://exemplemotors.com.br/veiculos/hatch/`\n    - `• PDF: http://exemplo.com/catalogo.pdf` (apenas para PDFs)\n\n## **Para Listas Numeradas (Correlação Numérica)**\n- Ao apresentar opções numeradas (ex: tipos de veículo), **SEMPRE** valide se a resposta do usuário é um número dentro do intervalo.\n- Converta internamente o número selecionado para a opção correspondente antes de prosseguir.\n- **Exemplo de Fluxo:**\n    - *Você:* \"1. Hatch. 2. Sedan. 3. SUV. 4. Pick-up.\"\n    - *Usuário:* \"3\"\n    - *Você (processa internamente):* `tipo_veiculo = \"SUV\"` e continua o fluxo.\n\n## **Interpretação de \"@\" (Arroba)**\n- Interprete a menção da palavra \"arroba\" como o símbolo `@`.\n- Isso é crucial para e-mails (`exemplemotors@hotmail.com`).\n\n</instruções>\n\n<restrições>\n\n# RESTRIÇÕES CRÍTICAS:\n\n- **Repetição de Dados:** Nunca repita dados fornecidos pelo usuário em forma de confirmação. Ex: Evite \"Então, você está procurando um [SUV]?\". Prosiga diretamente para a apresentação de opções.\n- **Invenção de Informações:** Nunca invente informações, preços, quilometragem, ano, detalhes técnicos ou disponibilidade de veículos. Use apenas o que está no portfólio ou site.\n- **Gestão de Agenda:** Nunca mencione, sugira, confirme ou negue a disponibilidade de horários para test-drive. Essa é uma função do atendente humano.\n- **Loops Abertos:** Nunca encerre com frases vagas que deixam a conversa em aberto (\"Estou aqui para o que precisar\"). Encerre com empatia e clareza, ou direcionando para o próximo passo.\n- **Frases de Encerramento Repetitivas:** Alterne as despedidas. Não use a mesma frase em interações consecutivas.\n- **Excesso de Informalidade:** Mantenha o equilíbrio entre simpatia e profissionalismo. Evite gírias excessivas. É um especialista em veículos.\n\n</restrições>\n\n<atendimento>\n# ETAPA 1: SAUDAÇÃO\n\"Olá! Bem-vindo à Autoshow Veículos! 😊 \n\nMeu nome é Clara.\n\nVocê tem preferência por algum *tipo* de veículo? Como Hatch, Sedan, SUV ou Pick-up?\"\n\n# ETAPA 2: QUALIFICAÇÃO (SOMENTE QUANDO NÃO IDENTIFICOU O CARRO DESEJADO)\n- **Pergunta 1 (Tipo/Modelo):** \"Qual tipo de veículo você tem em mente? Ou algum modelo específico?\"\n- **Pergunta 2 (Uso/Necessidade):** \"Excelente escolha! Para te ajudar a filtrar melhor, me conta: o carro será mais para *uso urbano* no dia a dia, ou você precisa de algo para *viagens* e *estradas*? 🛣️\"\n- **Pergunta 3 (Interesse):** Após apresentar algumas opções: \"Gostou de alguma dessas opções? Posso te passar mais detalhes técnicos de um modelo específico ou verificar sua disponibilidade com nossa equipe.\"\n\n# ETAPA 3: APRESENTE AS INFORMAÇÕES DO CARRO (QUANDO DISPONÍVEL)\n\n> Utilize a tool para buscar informações dos carros e apresente-as quando necessário.\n\n# ETAPA 4: FINALIZAÇÃO E ENCAMINHAMENTO\n\"Perfeito! Fico feliz que você se interessou pelo *[Modelo do Veículo]*! 🎉 Para que você possa conhecer todos os detalhes, fazer uma *proposta* ou agendar um *test-drive*, vou conectar você agora com um dos nossos *especialistas em atendimento*.\"\n\n*Acionar função/envio de mensagem para:*\n*Atendente Humano - Lead Qualificado: Interesse no [Modelo do Veículo]*\n\n\"Em instantes você será atendido. Foi um prazer te ajudar! 👋\"\n</atendimento>\n\n<objeções-faq>\n**Cliente: \"Só estou olhando.\"**\n\"Sem problemas! Explorar é a melhor parte da busca. 😊 Posso te mostrar alguns dos nossos *veículos em destaque* ou você tem alguma característica em mente (como *câmbio automático* ou *tanquinho*) para eu filtrar?\"\n\n**Cliente: \"O preço está alto.\"**\n\"Entendo perfeitamente. A Autoshow trabalha com veículos cuidadosamente selecionados e com a melhor relação *custo-benefício*. Posso verificar se há outras opções dentro do seu *orçamento ideal*? Nosso time de atendimento também pode explicar todas as *condições de financiamento* que oferecemos.\"\n\n**Cliente: \"Preciso dar meu carro na troca.\"**\n\"Ótimo! A Autoshow faz *avaliação do seu veículo* na hora! Para dar andamento, nosso atendente vai precisar de algumas informações básicas sobre o seu carro atual (marca, modelo, ano e quilometragem). Posso encaminhar você para ele agora?\"\n\n**Cliente: \"Tem garantia?\"**\n\"Com certeza! 🛡️ Todos os nossos veículos passam por uma *rigorosa revisão técnica* antes da venda. O time de atendimento terá prazer em detalhar a *cobertura completa da garantia* que oferecemos para você dirigir com total tranquilidade.\"\n\n</objeções-faq>\n\n<informações>\n**Nome da Empresa:** Exemple Motors\n**Segmento:** Concessionária de Automóveis\n**Localização:** Av. Barão do Rio Branco, 1095, Campinas, SP, Brazil\n**Telefone de Contato:** (99) 99999-9999\n**E-mail:** exemplemotors@hotmail.com\n**Site:** exemplemotors.com.br\n\n**Informações Cruciais:**\n- Somos uma concessionária multimarcas.\n- Oferecemos veículos novos e seminovos.\n- Trabalhamos com venda direta, troca e financiamento.\n- O objetivo final do LLM é qualificar o lead e encaminhar para um atendente humano que fará o agendamento de visita, test-drive, avaliação de troca e negociação final.\n</informações>"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        1104,
+        288
+      ],
+      "id": "62c0e925-f72e-44a0-8b0d-bdea6ddb639b",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        1072,
+        512
+      ],
+      "id": "f07f40c8-2e03-4854-90c5-2aee4bdeeadc",
+      "name": "OpenAI Chat Model"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "value": "DLHf717wo33PKRW2",
+          "mode": "list",
+          "cachedResultName": "carros",
+          "cachedResultUrl": "/projects/blFyiwb8P9MBic2F/datatables/DLHf717wo33PKRW2"
+        },
+        "returnAll": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Return_All', ``, 'boolean') }}"
+      },
+      "type": "n8n-nodes-base.dataTableTool",
+      "typeVersion": 1,
+      "position": [
+        1472,
+        512
+      ],
+      "id": "984b8f46-f89a-4b53-8bea-abb8877d7b82",
+      "name": "busca informações dos carros"
+    },
+    {
+      "parameters": {
+        "resource": "messages-api",
+        "instanceName": "={{ $('Webhook1').item.json.body.instance }}",
+        "remoteJid": "={{ $('Webhook1').item.json.body.data.key.remoteJid }}",
+        "messageText": "={{ $json.mensagem }}",
+        "options_message": {
+          "delay": 1200,
+          "linkPreview": true
+        }
+      },
+      "type": "n8n-nodes-evolution-api.evolutionApi",
+      "typeVersion": 1,
+      "position": [
+        2352,
+        528
+      ],
+      "id": "8c0c999a-de9e-413e-9f54-f01e31433ef1",
+      "name": "Enviar texto"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "evolution",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -3280,
+        176
+      ],
+      "id": "cdbca911-1b5c-4649-a218-eea3211bb4a1",
+      "name": "Webhook1",
+      "webhookId": "872451da-6d7d-489d-8d62-46f4734a8073"
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $json.body.instance }} {{ $json.body.data.key.remoteJid }} chat_memory",
+        "sessionTTL": 3600,
+        "contextWindowLength": 10
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryRedisChat",
+      "typeVersion": 1.5,
+      "position": [
+        1200,
+        512
+      ],
+      "id": "b104ec12-ec7a-4380-bcd9-82b458f582e7",
+      "name": "Redis Chat Memory"
+    },
+    {
+      "parameters": {
+        "resource": "chat-api",
+        "operation": "get-media-base64",
+        "instanceName": "={{ $('CondiçãoNumeroTeste(Alexandre)').item.json.body.instance }}",
+        "messageId": "={{ $('Webhook1').item.json.body.data.key.id }}"
+      },
+      "type": "n8n-nodes-evolution-api.evolutionApi",
+      "typeVersion": 1,
+      "position": [
+        -2608,
+        176
+      ],
+      "id": "2bdca9d7-ce87-4c54-92eb-f697f02f68a6",
+      "name": "Obter m dia em base64"
+    },
+    {
+      "parameters": {
+        "operation": "toBinary",
+        "sourceProperty": "data.base64",
+        "options": {
+          "fileName": "audio.mp3",
+          "mimeType": "audio/mpeg"
+        }
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        -2384,
+        176
+      ],
+      "id": "d6694dd4-4dc8-4ce2-80d9-27505dd2445e",
+      "name": "Convert to File"
+    },
+    {
+      "parameters": {
+        "resource": "audio",
+        "operation": "transcribe",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        -2160,
+        176
+      ],
+      "id": "9a6e93a4-76f5-4de8-bb5c-55f583bdd39a",
+      "name": "Transcribe a recording"
+    },
+    {
+      "parameters": {
+        "resource": "image",
+        "operation": "analyze",
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4O-MINI"
+        },
+        "text": "O que essa imagem representa?",
+        "inputType": "base64",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        -2160,
+        368
+      ],
+      "id": "76110ccd-48b4-435a-9799-8471f604055f",
+      "name": "Analyze image"
+    },
+    {
+      "parameters": {
+        "resource": "chat-api",
+        "operation": "get-media-base64",
+        "instanceName": "={{ $json.body.instance }}",
+        "messageId": "={{ $('Webhook1').item.json.body.data.key.id }}"
+      },
+      "type": "n8n-nodes-evolution-api.evolutionApi",
+      "typeVersion": 1,
+      "position": [
+        -2608,
+        368
+      ],
+      "id": "565ba961-0674-4644-8acd-a25f9ea0d195",
+      "name": "Obter m dia em base"
+    },
+    {
+      "parameters": {
+        "operation": "toBinary",
+        "sourceProperty": "data.base64",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        -2384,
+        368
+      ],
+      "id": "9ea19cd0-a4a4-4f67-9771-7fbebd6e122b",
+      "name": "Convert to File1"
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "messages": {
+          "messageValues": [
+            {
+              "type": "ai",
+              "message": "={{ $json.messageFinal }}"
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryManager",
+      "typeVersion": 1.1,
+      "position": [
+        704,
+        416
+      ],
+      "id": "7719938d-1ef7-4ed1-9582-353a8a1a1502",
+      "name": "Chat Memory Manager"
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "messages": {
+          "messageValues": [
+            {
+              "type": "user",
+              "message": "={{ $('MsgFinal').item.json.messageFinal }}"
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryManager",
+      "typeVersion": 1.1,
+      "position": [
+        1104,
+        16
+      ],
+      "id": "0171e7aa-acd9-492b-a723-e4958717194c",
+      "name": "Chat Memory Manager1"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "0f5683d0-d194-42ca-b9c6-d7f4489dec39",
+              "leftValue": "={{ $json.body.data.key.remoteJid }}",
+              "rightValue": "981452",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            },
+            {
+              "id": "a05b835e-9385-493f-870b-da7aed42ae1e",
+              "leftValue": "={{ $json.body.data.key.remoteJid }}",
+              "rightValue": "99394",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -3056,
+        176
+      ],
+      "id": "e7d664dc-341b-4170-9b39-6c774b541d7d",
+      "name": "CondiçãoNumeroTeste(Alexandre)"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.body.data.messageType }}",
+                    "rightValue": "conversation",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "c77674dd-ca68-441e-835c-7f6da2f95144"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "35902d52-01de-486b-9e1f-0dfe6d31958f",
+                    "leftValue": "={{ $json.body.data.messageType }}",
+                    "rightValue": "audioMessage",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "564f0fa7-012b-4dfd-9750-e5a721fec1d4",
+                    "leftValue": "={{ $json.body.data.messageType }}",
+                    "rightValue": "imageMessage",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.3,
+      "position": [
+        -2832,
+        160
+      ],
+      "id": "528aafe2-764c-4865-8fdf-9b50740bbede",
+      "name": "FiltraMensagem(Texto/Audio/Imagem)"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "19dcda7b-f2f3-4f7a-b2f9-55eb018cc853",
+              "leftValue": "={{ $('Webhook1').item.json.body.data.key.fromMe }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "false",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        304,
+        160
+      ],
+      "id": "470c5798-4b1b-4595-ae18-2ce042f748eb",
+      "name": "VerificaMensagemFromMe"
+    },
+    {
+      "parameters": {
+        "operation": "set",
+        "key": "={{ $('CondiçãoNumeroTeste(Alexandre)').item.json.body.instance }} {{ $('CondiçãoNumeroTeste(Alexandre)').item.json.body.data.key.remoteJid }} block",
+        "value": "true",
+        "expire": true,
+        "ttl": 1200
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        528,
+        416
+      ],
+      "id": "e97d4d1c-ca5f-461e-82f5-96d6b06ea353",
+      "name": "SalvaContextoMsgPróprioBot"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "propertyName": "isBlocked",
+        "key": "={{ $('Webhook1').item.json.body.instance }} {{ $('Webhook1').item.json.body.data.key.remoteJid }} block",
+        "options": {
+          "dotNotation": true
+        }
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        528,
+        80
+      ],
+      "id": "c6240429-e131-4d1c-b44a-1d7a61a4d7ad",
+      "name": "ConsultaBancoUserBlock"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "f71d52ba-00a7-4cc3-8dfc-1765a19e887c",
+              "leftValue": "={{ $json.isBlocked }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        816,
+        80
+      ],
+      "id": "1c74b240-e8ce-4c8c-b538-390f82a02040",
+      "name": "VerificaUserBlock"
+    },
+    {
+      "parameters": {
+        "jsCode": "const textoOriginal = $input.item.json.output || \"\";\nlet texto = textoOriginal;\n\n// 🔸 Protege abreviações comuns (para não quebrar nelas)\nconst abreviacoes = [\n  \"Av\", \"Dr\", \"Dra\", \"Sr\", \"Sra\", \"Prof\", \"Profa\", \"R\", \"Rua\", \"Rod\"\n];\nfor (const abv of abreviacoes) {\n  const regex = new RegExp(`\\\\b${abv}\\\\.(?=\\\\s+[A-ZÀ-Ú])`, \"g\");\n  texto = texto.replace(regex, `${abv}⸺`); // marcador invisível\n}\n\n// 🔸 Protege blocos entre asteriscos (*...*) ou duplos (**...**)\nconst protegidos = [];\ntexto = texto.replace(/(\\*{1,2}[^*]+\\*{1,2})/g, match => {\n  const marcador = `§${protegidos.length}§`;\n  protegidos.push(match);\n  return marcador;\n});\n\n// 🔹 Divide o texto em frases (respeitando emojis e quebras)\nlet partes = texto\n  .split(/\\n{2,}|(?<=[.!?])\\s+(?=[A-Za-zÀ-ú0-9])|(?<=\\p{Emoji})\\s+/u)\n  .map(p => p.trim())\n  .filter(p => p.length > 0);\n\n// 🔹 Restaura abreviações e blocos com asterisco\npartes = partes.map(p => {\n  p = p.replace(/⸺/g, \".\");\n  return p.replace(/§(\\d+)§/g, (_, i) => protegidos[i]);\n});\n\n// 🔹 Remove aspas extras\npartes = partes.map(p => p.replace(/^\"+|\"+$/g, \"\"));\n\n// 🔹 Junta emojis ou fragmentos curtos à frase anterior\nconst ajustado = [];\nfor (const p of partes) {\n  if ((/^[\\p{Emoji}\\p{Punctuation}\\s]+$/u.test(p) || p.length < 10) && ajustado.length > 0) {\n    ajustado[ajustado.length - 1] += \" \" + p;\n  } else {\n    ajustado.push(p);\n  }\n}\n\n// 🔹 Divide mensagens muito longas (>1000 chars)\nconst limite = 1000;\nconst dividido = [];\nfor (const p of ajustado) {\n  if (p.length > limite) {\n    for (let i = 0; i < p.length; i += limite) {\n      dividido.push(p.slice(i, i + limite));\n    }\n  } else {\n    dividido.push(p);\n  }\n}\n\n// === RETURN: classifica cada pedaço como texto ou imagem (markdown/link) ===\nfunction parseImage(msg) {\n  const text = msg.trim();\n\n  // 1) Markdown de imagem: ![alt](url)\n  const md = text.match(/!\\[([^\\]]*)\\]\\(([^)]+)\\)/);\n  if (md) {\n    return { tipo: 'imagem', urlImagem: md[2], legenda: md[1] || '' };\n  }\n\n  // 2) Link direto de imagem (aceita querystring)\n  const url = text.match(/https?:\\/\\/\\S+\\.(?:jpg|jpeg|png|webp|gif)(?:\\?\\S+)?/i);\n  if (url) {\n    return { tipo: 'imagem', urlImagem: url[0], legenda: '' };\n  }\n\n  return { tipo: 'texto', mensagem: text };\n}\n\nreturn dividido.map((raw) => {\n  const parsed = parseImage(raw);\n  if (parsed.tipo === 'imagem') {\n    return { json: { tipo: 'imagem', urlImagem: parsed.urlImagem, legenda: parsed.legenda } };\n  }\n  return { json: { tipo: 'texto', mensagem: parsed.mensagem } };\n});\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1456,
+        288
+      ],
+      "id": "d395d22d-ed53-4360-a418-f7e6c35d2846",
+      "name": "Pica/ConfiguraMsg"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "cc4a1e12-be50-4030-bc46-144127565d41",
+              "leftValue": "={{ $json.tipo }}",
+              "rightValue": "imagem",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2080,
+        304
+      ],
+      "id": "081fdc66-9d08-4c5f-b11e-ab34339dc212",
+      "name": "VerificaTipoRespostaMsg"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a5b1fc26-7894-4dcb-bb69-942be6ae8d6b",
+              "name": "message",
+              "value": "={{ $json.mensagemTexto }} {{ $json.mensagemAudio }} {{ $json.mensagemImagem }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1712,
+        176
+      ],
+      "id": "b30c09a6-1524-4722-afa2-ef5fc47d459a",
+      "name": "UnificaTipoMsg"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "4065613b-862d-48e5-a9e8-1590cb5a5f84",
+              "name": "mensagemTexto",
+              "value": "={{ $json.body.data.message.conversation }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1936,
+        16
+      ],
+      "id": "26e5233b-fb66-449d-82ea-4066d24537f1",
+      "name": "MsgTexto"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "4065613b-862d-48e5-a9e8-1590cb5a5f84",
+              "name": "mensagemAudio",
+              "value": "={{ $json.text }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1936,
+        176
+      ],
+      "id": "dafe0240-ab86-458b-8a01-184968294be7",
+      "name": "MsgAudio"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "4065613b-862d-48e5-a9e8-1590cb5a5f84",
+              "name": "mensagemImagem",
+              "value": "={{ $json.content }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1936,
+        368
+      ],
+      "id": "37f87d09-d0ab-49a7-8ce2-a38237b150f4",
+      "name": "MsgImagem"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "propertyName": "mendagensAcumuladas",
+        "key": "={{ $('Webhook1').item.json.body.data.instanceId }} {{ $('Webhook1').item.json.body.data.key.remoteJid }} temp",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        -1040,
+        176
+      ],
+      "id": "6b6efd5b-04d7-4f7a-af7d-c8753e9cc2a7",
+      "name": "BuscaMensagensAcumuladas"
+    },
+    {
+      "parameters": {
+        "amount": 8
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -1264,
+        176
+      ],
+      "id": "5c4b1401-8a2e-4b32-9ede-8a6d008e6a9e",
+      "name": "AguardaAcumuloMsg",
+      "webhookId": "849903f7-66cf-43b4-aee0-9629c773d85f"
+    },
+    {
+      "parameters": {
+        "resource": "messages-api",
+        "operation": "send-image",
+        "instanceName": "={{ $('Webhook1').item.json.body.instance }}",
+        "remoteJid": "={{ $('Webhook1').item.json.body.data.key.remoteJid }}",
+        "media": "={{ $json.urlImagem }}",
+        "caption": "={{ $json.legenda || \"\" }}",
+        "options_message": {}
+      },
+      "type": "n8n-nodes-evolution-api.evolutionApi",
+      "typeVersion": 1,
+      "position": [
+        2352,
+        304
+      ],
+      "id": "3e37473b-67b7-4a74-bc1d-ed550b5a978e",
+      "name": "EnviarImagem(Link)"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "0e4b0aae-8c54-4cbe-841b-c5203e8e4dea",
+              "leftValue": "={{ $json.mendagensAcumuladas.last() }}",
+              "rightValue": "={{ $('UnificaTipoMsg').item.json.message }}",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -816,
+        176
+      ],
+      "id": "7d47a9b4-693d-4afb-9257-104812608068",
+      "name": "VerificaExistênciaMsg"
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "key": "={{ $('Webhook1').item.json.body.data.instanceId }} {{ $('Webhook1').item.json.body.data.key.remoteJid }} temp"
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        -192,
+        160
+      ],
+      "id": "a526e961-3f19-4527-b5c0-e138f1d3fe93",
+      "name": "DeletaMsgAcumulada"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "4a871fc3-3385-476a-a6b9-1f6f24b22d30",
+              "name": "messageFinal",
+              "value": "={{ $json.mendagensAcumuladas.join(\" \") }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        64,
+        160
+      ],
+      "id": "1c145a01-26c7-47b7-b32a-860a174b85b1",
+      "name": "MsgFinal"
+    },
+    {
+      "parameters": {
+        "operation": "push",
+        "list": "={{ $('Webhook1').item.json.body.data.instanceId }} {{ $('Webhook1').item.json.body.data.key.remoteJid }} temp",
+        "messageData": "={{ $('UnificaTipoMsg').item.json.message }}",
+        "tail": true
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        -1488,
+        176
+      ],
+      "id": "431b1221-8644-4350-84a1-0fb9c10d71f9",
+      "name": "SalvaMsgTemporária"
+    },
+    {
+      "parameters": {
+        "operation": "push",
+        "list": "={{ $('Webhook1').item.json.body.data.instanceId }} {{ $('Webhook1').item.json.body.data.key.remoteJid }} temp",
+        "messageData": "={{ $('UnificaTipoMsg').item.json.message }}",
+        "tail": true
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        -592,
+        256
+      ],
+      "id": "0728dfc2-3bbf-4327-a903-974e7e022b92",
+      "name": "SalvaNovaMsgTemporária"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "propertyName": "mendagensAcumuladas",
+        "key": "={{ $('Webhook1').item.json.body.data.instanceId }} {{ $('Webhook1').item.json.body.data.key.remoteJid }} temp",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        -368,
+        256
+      ],
+      "id": "9e54affa-3baf-43db-a38e-0302863dda92",
+      "name": "BuscaNovamenteMensagensAcumuladas"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1680,
+        288
+      ],
+      "id": "0f9ec963-ed10-469d-bfb6-9981d9371834",
+      "name": "LoopenvioMsg"
+    },
+    {
+      "parameters": {
+        "amount": "={{ (Math.random() * 2 + 1.2).toFixed(2) }}"
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1888,
+        304
+      ],
+      "id": "ff3d7ecf-ec81-4e63-a3ca-872d688007f2",
+      "name": "AtrasoEnvioMsg",
+      "webhookId": "bbdb9709-b644-4c01-8afe-273624bfa5a7"
+    },
+    {
+      "parameters": {
+        "content": "**IDENTIFICA E TRATA O TIPO DE MENSAGEM (TEXTO/AUDIO/IMAGEM)**",
+        "height": 560,
+        "width": 1296,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -2864,
+        -16
+      ],
+      "typeVersion": 1,
+      "id": "02f24a60-a392-451c-ba02-8d68a1f61e2f",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "**ACUMULA E BUSCA MENSAGENS TEMPORARIAS**",
+        "height": 560,
+        "width": 1728,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -1520,
+        -16
+      ],
+      "typeVersion": 1,
+      "id": "fb6fc218-d19d-4891-bae0-af4b9bd037ae",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "**UDENTIFICA MENSAGEM HUMANO/IA - PAUSA BOT QUANDO HUMANO**",
+        "height": 640,
+        "width": 752
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        256,
+        -16
+      ],
+      "typeVersion": 1,
+      "id": "8892726e-c838-4496-aa3d-7c5daf27309f",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "endpointUrl": "http://n8n:5678/mcp/b4ac0a0d-bc77-4caa-961d-eba4511d32fa",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.mcpClientTool",
+      "typeVersion": 1.2,
+      "position": [
+        1344,
+        592
+      ],
+      "id": "20dc21c6-a12d-4012-b8a6-339914727f7e",
+      "name": "BuscaInformaçõesCarros"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "busca informações dos carros": {
+      "ai_tool": [
+        []
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Pica/ConfiguraMsg",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook1": {
+      "main": [
+        [
+          {
+            "node": "CondiçãoNumeroTeste(Alexandre)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Redis Chat Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          },
+          {
+            "node": "Chat Memory Manager",
+            "type": "ai_memory",
+            "index": 0
+          },
+          {
+            "node": "Chat Memory Manager1",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enviar texto": {
+      "main": [
+        [
+          {
+            "node": "LoopenvioMsg",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Obter m dia em base64": {
+      "main": [
+        [
+          {
+            "node": "Convert to File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert to File": {
+      "main": [
+        [
+          {
+            "node": "Transcribe a recording",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Transcribe a recording": {
+      "main": [
+        [
+          {
+            "node": "MsgAudio",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Obter m dia em base": {
+      "main": [
+        [
+          {
+            "node": "Convert to File1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert to File1": {
+      "main": [
+        [
+          {
+            "node": "Analyze image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Analyze image": {
+      "main": [
+        [
+          {
+            "node": "MsgImagem",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "CondiçãoNumeroTeste(Alexandre)": {
+      "main": [
+        [
+          {
+            "node": "FiltraMensagem(Texto/Audio/Imagem)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "FiltraMensagem(Texto/Audio/Imagem)": {
+      "main": [
+        [
+          {
+            "node": "MsgTexto",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Obter m dia em base64",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Obter m dia em base",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "VerificaMensagemFromMe": {
+      "main": [
+        [
+          {
+            "node": "ConsultaBancoUserBlock",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "SalvaContextoMsgPróprioBot",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SalvaContextoMsgPróprioBot": {
+      "main": [
+        [
+          {
+            "node": "Chat Memory Manager",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ConsultaBancoUserBlock": {
+      "main": [
+        [
+          {
+            "node": "VerificaUserBlock",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "VerificaUserBlock": {
+      "main": [
+        [
+          {
+            "node": "Chat Memory Manager1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pica/ConfiguraMsg": {
+      "main": [
+        [
+          {
+            "node": "LoopenvioMsg",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "VerificaTipoRespostaMsg": {
+      "main": [
+        [
+          {
+            "node": "EnviarImagem(Link)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Enviar texto",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "UnificaTipoMsg": {
+      "main": [
+        [
+          {
+            "node": "SalvaMsgTemporária",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "MsgTexto": {
+      "main": [
+        [
+          {
+            "node": "UnificaTipoMsg",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "MsgAudio": {
+      "main": [
+        [
+          {
+            "node": "UnificaTipoMsg",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "MsgImagem": {
+      "main": [
+        [
+          {
+            "node": "UnificaTipoMsg",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "BuscaMensagensAcumuladas": {
+      "main": [
+        [
+          {
+            "node": "VerificaExistênciaMsg",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AguardaAcumuloMsg": {
+      "main": [
+        [
+          {
+            "node": "BuscaMensagensAcumuladas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "EnviarImagem(Link)": {
+      "main": [
+        [
+          {
+            "node": "LoopenvioMsg",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "VerificaExistênciaMsg": {
+      "main": [
+        [
+          {
+            "node": "DeletaMsgAcumulada",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "SalvaNovaMsgTemporária",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "DeletaMsgAcumulada": {
+      "main": [
+        [
+          {
+            "node": "MsgFinal",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "MsgFinal": {
+      "main": [
+        [
+          {
+            "node": "VerificaMensagemFromMe",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SalvaMsgTemporária": {
+      "main": [
+        [
+          {
+            "node": "AguardaAcumuloMsg",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SalvaNovaMsgTemporária": {
+      "main": [
+        [
+          {
+            "node": "BuscaNovamenteMensagensAcumuladas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "BuscaNovamenteMensagensAcumuladas": {
+      "main": [
+        [
+          {
+            "node": "DeletaMsgAcumulada",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "LoopenvioMsg": {
+      "main": [
+        [],
+        [
+          {
+            "node": "AtrasoEnvioMsg",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AtrasoEnvioMsg": {
+      "main": [
+        [
+          {
+            "node": "VerificaTipoRespostaMsg",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "BuscaInformaçõesCarros": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "America/Sao_Paulo",
+    "callerPolicy": "workflowsFromSameOwner",
+    "executionTimeout": 300,
+    "availableInMCP": false,
+    "errorWorkflow": "oFeQuxEY7bANF6bC",
+    "timeSavedPerExecution": 5
+  },
+  "versionId": "7554793f-9f79-4a7a-8d3f-ee9922044cc7",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "b16fe0921d58f5b2fd40fba00f8eb16946a51e20e3ba9feb3edf86d8f085abbb"
+  },
+  "id": "IM9Vj2MQjp5JQLUs",
+  "tags": []
+}
