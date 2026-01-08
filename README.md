@@ -103,7 +103,7 @@ Fluxo resumido:
 ├── workflow/
 │   └── ai-attendance-engine.json
 ├── assets/
-│   └── flow-overview.png
+│   └── flow-overview-v2.png
 └── README.md
 ```
 
